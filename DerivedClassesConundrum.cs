@@ -3,11 +3,16 @@ using System;
 namespace Scripts
 {
 
+#region BaseClasses
+    
+
     public  class BaseProperty : Object
     {
         public int myInt = 1;
 
-
+        public virtual void Print() {
+            Console.WriteLine($"Base class: {GetType()} : {myInt}");
+        }
     }
 
     // An abstract class that can be inherited.
@@ -17,13 +22,21 @@ namespace Scripts
 
         public BaseClass()
         {
-            Console.WriteLine($"Base class: {myProperty.myInt}");
+            
+        }
+
+        public virtual void Print(BaseProperty property){
+             property.Print();
         }
     }
 
     public  class DerivedProperty : BaseProperty
     {
         public int myDerivedInt = 2;
+
+        public override void Print(){
+            Console.WriteLine($"Derived class: {GetType()} : {myInt}, {myDerivedInt}");
+        }
     }
 
     // A sub type of abstract class which will be inherited.
@@ -33,15 +46,24 @@ namespace Scripts
 
         public DerivedClass() : base()
         {
-
-            Console.WriteLine($"Derived class: {myProperty.myInt}, {myProperty.myDerivedInt}");
+            
         }
-    }
 
+        // public override void Print(BaseProperty property){
+        //     property.Print();
+        // }
+    }
+#endregion
+
+#region Useable classes
+    
     public class UseableDerivedProperty : DerivedProperty
     {
         public int myUseableInt = 3;
 
+        public override void Print(){
+            Console.WriteLine($"Useable derived class: {GetType()} : {myInt}, {myDerivedInt}, {myUseableInt}");
+        }
     }
 
     public class UseableDerivedClass : DerivedClass
@@ -50,13 +72,17 @@ namespace Scripts
 
         public UseableDerivedClass() : base()
         {
-            Console.WriteLine($"Useable derived class: {myProperty.myInt}, {myProperty.myDerivedInt}, {myProperty.myUseableInt}");
+            base.Print(myProperty);
         }
     }
 
     public class UseableBaseProperty : BaseProperty
     {
         public int myUseableInt = 2;
+
+        public override void Print() {
+            Console.WriteLine($"Useable base class: {GetType()} : {myInt}, {myUseableInt}");
+        }
     }
 
     public class UseableBaseClass : BaseClass
@@ -65,8 +91,11 @@ namespace Scripts
 
         public UseableBaseClass() : base()
         {
-            Console.WriteLine($"Useable base class: {myProperty.myInt}, {myProperty.myUseableInt}");
+            base.Print(myProperty);
         }
+
+
     }
+#endregion
 
 }
