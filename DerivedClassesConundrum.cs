@@ -21,7 +21,7 @@ namespace Scripts
         where TProperty : BaseProperty
     {
         public TProperty myProperty;
-        public List<BaseProperty> childProperties = new List<BaseProperty>();
+        public List<BaseClass<TProperty>> childProperties = new List<BaseClass<TProperty>>();
 
         public BaseClass()
         {
@@ -30,12 +30,13 @@ namespace Scripts
 
         public virtual void Print(TProperty property){
              property.Print();
-             childProperties.ForEach(p => p.Print());
+            //  childProperties.ForEach(p => Print());
         }
 
-        public virtual void AddChild(BaseProperty property){
+        public virtual void AddChild(BaseClass<TProperty> property)
+        {
             if (childProperties == null)
-                childProperties = new List<BaseProperty>();
+                childProperties = new List<BaseClass<TProperty>>();
             childProperties.Add(property);  
         }
     }
@@ -50,7 +51,7 @@ namespace Scripts
     }
 
     // A sub type of abstract class which will be inherited.
-    public  class DerivedClass<TProperty> : BaseClass<TProperty>
+    public abstract class DerivedClass<TProperty> : BaseClass<TProperty>
     where TProperty : DerivedProperty
     {
 
@@ -84,7 +85,7 @@ namespace Scripts
         {
             myProperty = new UseableDerivedProperty();
             base.Print(myProperty);
-            base.AddChild(new UseableDerivedProperty() {myUseableInt = -1});
+            
         }
     }
 
@@ -105,7 +106,7 @@ namespace Scripts
         {
             myProperty = new UseableBaseProperty();
             base.Print(myProperty);
-            base.AddChild(new UseableDerivedProperty() {myUseableInt = -1});
+            
         }
 
 
