@@ -21,7 +21,7 @@ namespace Scripts
         where TProperty : BaseProperty
     {
         public TProperty myProperty;
-        public List<BaseClass<TProperty>> childProperties = new List<BaseClass<TProperty>>();
+        public List<BaseClass<TProperty>> childClasses = new List<BaseClass<TProperty>>();
 
         public BaseClass()
         {
@@ -33,11 +33,11 @@ namespace Scripts
             //  childProperties.ForEach(p => Print());
         }
 
-        public virtual void AddChild(BaseClass<TProperty> property)
+        public virtual void AddChild(BaseClass<TProperty> child)
         {
-            if (childProperties == null)
-                childProperties = new List<BaseClass<TProperty>>();
-            childProperties.Add(property);  
+            if (childClasses == null)
+                childClasses = new List<BaseClass<TProperty>>();
+            childClasses.Add(child);  
         }
     }
 
