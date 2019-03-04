@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Scripts
 {
@@ -16,17 +17,26 @@ namespace Scripts
     }
 
     // An abstract class that can be inherited.
-    public  class BaseClass
+    public abstract class BaseClass<TProperty>
+        where TProperty : BaseProperty
     {
-        public BaseProperty myProperty = new BaseProperty();
+        public TProperty myProperty;
+        public List<BaseProperty> childProperties = new List<BaseProperty>();
 
         public BaseClass()
         {
             
         }
 
-        public virtual void Print(BaseProperty property){
+        public virtual void Print(TProperty property){
              property.Print();
+             childProperties.ForEach(p => p.Print());
+        }
+
+        public virtual void AddChild(BaseProperty property){
+            if (childProperties == null)
+                childProperties = new List<BaseProperty>();
+            childProperties.Add(property);  
         }
     }
 
@@ -40,13 +50,13 @@ namespace Scripts
     }
 
     // A sub type of abstract class which will be inherited.
-    public  class DerivedClass : BaseClass
+    public  class DerivedClass<TProperty> : BaseClass<TProperty>
+    where TProperty : DerivedProperty
     {
-        public new DerivedProperty myProperty = new DerivedProperty();
 
         public DerivedClass() : base()
         {
-            
+            // base.Print(myProperty);
         }
 
         // public override void Print(BaseProperty property){
@@ -66,13 +76,15 @@ namespace Scripts
         }
     }
 
-    public class UseableDerivedClass : DerivedClass
+    public class UseableDerivedClass : DerivedClass<UseableDerivedProperty>
     {
-        public new UseableDerivedProperty myProperty = new UseableDerivedProperty();
+        // public UseableDerivedProperty myProperty = new UseableDerivedProperty();
 
         public UseableDerivedClass() : base()
         {
+            myProperty = new UseableDerivedProperty();
             base.Print(myProperty);
+            base.AddChild(new UseableDerivedProperty() {myUseableInt = -1});
         }
     }
 
@@ -85,13 +97,15 @@ namespace Scripts
         }
     }
 
-    public class UseableBaseClass : BaseClass
+    public class UseableBaseClass : BaseClass<UseableBaseProperty>
     {
-        public new UseableBaseProperty myProperty = new UseableBaseProperty();
+        // public UseableBaseProperty myProperty = new UseableBaseProperty();
 
         public UseableBaseClass() : base()
         {
+            myProperty = new UseableBaseProperty();
             base.Print(myProperty);
+            base.AddChild(new UseableDerivedProperty() {myUseableInt = -1});
         }
 
 

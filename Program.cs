@@ -10,6 +10,7 @@ namespace Scripts
             Console.WriteLine("Hello World!");
             var u_baseclass = new UseableBaseClass();
             var u_derivedclass = new UseableDerivedClass();
+            // var derivedclass = new DerivedClass();
         }
     }
 }
