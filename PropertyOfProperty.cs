@@ -4,8 +4,25 @@ namespace Scripts.Properties
 {
     public class Property
     {
-        public int myInt;
+        private int myInt;
+
+        private string myString = "";
+
+
         protected PropertyOfProperty propertyOfProperty = new PropertyOfProperty();
+
+        // One possible solution. But it creates too much repeating code.
+        public Action updatedAction;
+
+        public int MyInt
+        {
+            get => myInt;
+            set
+            {
+                updatedAction?.Invoke();
+                myInt = value;
+            }
+        }
 
         public PropertyOfProperty PropertyOfProperty
         {
@@ -56,7 +73,7 @@ namespace Scripts.Properties
         public void Print()
         {
             Console.WriteLine(
-                $"Property: {_property.myInt}, child property: {_property.PropertyOfProperty.myInt}, {_property.PropertyOfProperty.myString}");
+                $"Property: {_property.MyInt}, child property: {_property.PropertyOfProperty.myInt}, {_property.PropertyOfProperty.myString}");
         }
 
         public static MyClass Test()
@@ -67,15 +84,27 @@ namespace Scripts.Properties
             classObj.Print();
             // Want the change method to invoke whenever a property is changed.
             Console.WriteLine("Changing values.");
-            classObj.Property.myInt = 1;
+            classObj.Property.MyInt = 1;
             classObj.Property.PropertyOfProperty.myInt = 1;
             classObj.Property.PropertyOfProperty.myString = "Updated.";
             classObj.Print();
             // This invokes the property but requires you to entirely replace the property.
             Console.WriteLine("Replacing properties.");
-            classObj.Property = new Property {myInt = 2};
+            classObj.Property = new Property {MyInt = 2};
             classObj.Property.PropertyOfProperty = new PropertyOfProperty {myInt = 2};
             classObj.Print();
+            // Possible solution. This is kinda annoying but so are the other solutions.
+            // Best of the bad options we got.
+            var property = classObj.Property;
+            property.MyInt = 3;
+            classObj.Property = property;
+            classObj.Print();
+            // Another possible solution. But then user has to remember to call it and there's
+            // no programmer who reads the docs until they run into issues. 
+            classObj.Property.MyInt = 4;
+            classObj.PropertyUpdated(classObj.Property);
+            classObj.Print();
+
 
             return classObj;
         }
