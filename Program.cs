@@ -1,5 +1,5 @@
 ﻿using System;
-using Scripts.DerivedClassesConundrum;
+using Scripts.Properties;
 
 namespace Scripts
 {
@@ -8,8 +8,8 @@ namespace Scripts
         private static void Main(string[] args)
         {
             Console.WriteLine("Hello Darkness!");
-            var useableBaseClass = BaseMVCContainer.Test();
-
+//            var useableBaseClass = BaseMVCContainer.Test();
+            var classObj = MyClass.Test();
 
             Console.ReadKey();
         }
