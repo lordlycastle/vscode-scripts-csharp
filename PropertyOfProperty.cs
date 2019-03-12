@@ -55,18 +55,26 @@ namespace Scripts.Properties
 
         public void Print()
         {
-            Console.WriteLine($"Property: {_property.myInt}, child property: {_property.PropertyOfProperty.myInt}");
+            Console.WriteLine(
+                $"Property: {_property.myInt}, child property: {_property.PropertyOfProperty.myInt}, {_property.PropertyOfProperty.myString}");
         }
 
         public static MyClass Test()
         {
             var classObj = new MyClass();
+            // Initial values
+            Console.WriteLine("Initial values.");
             classObj.Print();
+            // Want the change method to invoke whenever a property is changed.
+            Console.WriteLine("Changing values.");
             classObj.Property.myInt = 1;
             classObj.Property.PropertyOfProperty.myInt = 1;
+            classObj.Property.PropertyOfProperty.myString = "Updated.";
             classObj.Print();
-            classObj.Property = new Property();
-            classObj.Property.PropertyOfProperty = new PropertyOfProperty();
+            // This invokes the property but requires you to entirely replace the property.
+            Console.WriteLine("Replacing properties.");
+            classObj.Property = new Property {myInt = 2};
+            classObj.Property.PropertyOfProperty = new PropertyOfProperty {myInt = 2};
             classObj.Print();
 
             return classObj;
