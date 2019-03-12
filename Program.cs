@@ -1,19 +1,17 @@
 ﻿using System;
-// using Scripts;
+using Scripts.DerivedClassesConundrum;
 
 namespace Scripts
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            var u_baseclass = new UseableBaseClass();
-            var u_derivedclass = new UseableDerivedClass();
-            // var derivedclass = new DerivedClass();
-            var type = u_derivedclass.GetType();
-            u_baseclass.AddChild(u_derivedclass);
-            
+            Console.WriteLine("Hello Darkness!");
+            var useableBaseClass = BaseMVCContainer.Test();
+
+
+            Console.ReadKey();
         }
     }
 }
