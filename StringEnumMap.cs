@@ -19,6 +19,7 @@ namespace Scripts
     public abstract class StringEnumMap<TEnum> : IEnumerable<TEnum>, IComparable, IEquatable<TEnum>
         where TEnum : StringEnumMap<TEnum>, new()
     {
+
         /// <summary>
         ///     Dictionary with {this, this._stringRepresentation}.
         /// </summary>
@@ -115,10 +116,30 @@ namespace Scripts
         /// </summary>
         public static TEnum _ { get; } = new TEnum();
 
-        public override string ToString()
+        public override string ToString() => _stringRepresentation;
+
+        //        public override int GetHashCode() => _id;
+        public override int GetHashCode()
         {
-            return _stringRepresentation;
+            unchecked
+            {
+                var hashCode = _id;
+                hashCode = (hashCode * 397) ^ (_otherPossibleRepresentation != null ? _otherPossibleRepresentation.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_stringRepresentation != null ? _stringRepresentation.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (CachedType != null ? CachedType.GetHashCode() : 0);
+                return hashCode;
+            }
         }
+
+//        protected bool Equals(StringEnumMap<TEnum> other)
+//        {
+//            if (ReferenceEquals(null, other)) 
+//                return false;
+//            if (ReferenceEquals(this, other)) 
+//                return true;
+//            return _id == other._id &&
+//                   CachedType == other.CachedType;
+//        }
 
         #region Static Method
 
@@ -158,8 +179,10 @@ namespace Scripts
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
+            if (ReferenceEquals(null, obj)) 
+                return false;
+            if (ReferenceEquals(this, obj)) 
+                return true;
             var other = (TEnum) obj;
             if (other.CachedType != CachedType) return false;
             return Equals(other);
@@ -176,45 +199,33 @@ namespace Scripts
             return _id == other._id;
         }
 
-        public override int GetHashCode()
-        {
-            return _id;
-        }
 
         #endregion
 
         #region Operators
 
-        public static bool operator >(StringEnumMap<TEnum> lhs, StringEnumMap<TEnum> rhs)
-        {
-            return lhs.CompareTo(rhs) > 0;
-        }
+        // Compare
+        public static bool operator >(StringEnumMap<TEnum> lhs, StringEnumMap<TEnum> rhs) => lhs.CompareTo(rhs) > 0;
 
-        public static bool operator <(StringEnumMap<TEnum> lhs, StringEnumMap<TEnum> rhs)
-        {
-            return lhs.CompareTo(rhs) < 0;
-        }
+        public static bool operator <(StringEnumMap<TEnum> lhs, StringEnumMap<TEnum> rhs) => lhs.CompareTo(rhs) < 0;
 
-        public static bool operator >(StringEnumMap<TEnum> lhs, string rhs)
-        {
-            return lhs > _[rhs];
-        }
+        public static bool operator >(StringEnumMap<TEnum> lhs, string rhs) => lhs > _[rhs];
 
-        public static bool operator <(StringEnumMap<TEnum> lhs, string rhs)
-        {
-            return lhs < _[rhs];
-        }
+        public static bool operator <(StringEnumMap<TEnum> lhs, string rhs) => lhs < _[rhs];
 
-        public static bool operator >(string lhs, StringEnumMap<TEnum> rhs)
-        {
-            return rhs > lhs;
-        }
+        public static bool operator >(string lhs, StringEnumMap<TEnum> rhs) => rhs < lhs;
 
-        public static bool operator <(string lhs, StringEnumMap<TEnum> rhs)
-        {
-            return rhs < lhs;
-        }
+        public static bool operator <(string lhs, StringEnumMap<TEnum> rhs) => rhs > lhs;
 
+        public static bool operator >(StringEnumMap<TEnum> lhs, int rhs) => lhs._id > rhs;
+
+        public static bool operator <(StringEnumMap<TEnum> lhs, int rhs) => lhs._id < rhs;
+
+        public static bool operator >(int lhs, StringEnumMap<TEnum> rhs) => rhs < lhs;
+
+        public static bool operator <(int lhs, StringEnumMap<TEnum> rhs) => rhs > lhs;
+
+        // Equality
         public static bool operator ==(StringEnumMap<TEnum> lhs, StringEnumMap<TEnum> rhs)
         {
             if (ReferenceEquals(lhs, null) && ReferenceEquals(rhs, null))
@@ -224,10 +235,7 @@ namespace Scripts
             return lhs.Equals(rhs);
         }
 
-        public static bool operator !=(StringEnumMap<TEnum> lhs, StringEnumMap<TEnum> rhs)
-        {
-            return !(lhs == rhs);
-        }
+        public static bool operator !=(StringEnumMap<TEnum> lhs, StringEnumMap<TEnum> rhs) => !(lhs == rhs);
 
         public static bool operator ==(StringEnumMap<TEnum> lhs, string rhs)
         {
@@ -242,153 +250,53 @@ namespace Scripts
             return false;
         }
 
-        public static bool operator !=(StringEnumMap<TEnum> lhs, string rhs)
+        public static bool operator !=(StringEnumMap<TEnum> lhs, string rhs) => !(lhs == rhs);
+
+        public static bool operator ==(string lhs, StringEnumMap<TEnum> rhs) => rhs == lhs;
+
+        public static bool operator !=(string lhs, StringEnumMap<TEnum> rhs) => !(lhs == rhs);
+
+        public static bool operator ==(StringEnumMap<TEnum> lhs, int rhs)
         {
-            return !(lhs == rhs);
+            if (ReferenceEquals(lhs, null)) return false;
+            return lhs._id == rhs;
         }
 
-        public static bool operator ==(string lhs, StringEnumMap<TEnum> rhs)
-        {
-            return rhs == lhs;
-        }
+        public static bool operator !=(StringEnumMap<TEnum> lhs, int rhs) => !(lhs == rhs);
 
-        public static bool operator !=(string lhs, StringEnumMap<TEnum> rhs)
-        {
-            return !(lhs == rhs);
-        }
+        public static bool operator ==(int lhs, StringEnumMap<TEnum> rhs) => rhs == lhs;
 
-        public TEnum this[string key] => _fromString[key] as TEnum;
+        public static bool operator !=(int lhs, StringEnumMap<TEnum> rhs) => !(lhs == rhs);
 
-        public TEnum this[int id] => _fromId[id] as TEnum;
+        // Casting
+        public static int ToInt(TEnum _enum) => _enum._id;
 
-
-        public static int ToInt(TEnum e)
-        {
-            return e._id;
-        }
-
-        public static implicit operator int(StringEnumMap<TEnum> _enum)
-        {
-            return _enum._id;
-        }
+        public static explicit operator int(StringEnumMap<TEnum> _enum) => _enum._id;
 
         public static explicit operator StringEnumMap<TEnum>(int id)
         {
-            if (_fromId.ContainsKey(id)) return _fromId[id];
+            if (_fromId.ContainsKey(id)) 
+                return _fromId[id];
 
             throw new InvalidCastException($"Could not find value with id: {id}");
         }
 
         public static explicit operator StringEnumMap<TEnum>(string stringRepr)
         {
-            if (_fromString.ContainsKey(stringRepr)) return _fromString[stringRepr];
+            if (_fromString.ContainsKey(stringRepr)) 
+                return _fromString[stringRepr];
             throw new InvalidCastException($"Could not find value with string repr: {stringRepr}");
         }
 
-        public static explicit operator string(StringEnumMap<TEnum> _enum)
-        {
-            return _enum._stringRepresentation;
-        }
+        public static explicit operator string(StringEnumMap<TEnum> _enum) => _enum._stringRepresentation;
+        
+        // Dictionary Format
+        public TEnum this[string key] => _fromString[key] as TEnum;
+
+        public TEnum this[int id] => _fromId[id] as TEnum;
 
         #endregion
     }
 
-    public class ShapesEnum : StringEnumMap<ShapesEnum>
-    {
-        public static readonly ShapesEnum Point = new ShapesEnum(0,
-            "Point");
-
-        public static readonly ShapesEnum Line = new ShapesEnum(1,
-            "Line",
-            new List<string>
-            {
-                "1D"
-            });
-
-        public static readonly ShapesEnum Sqaure = new ShapesEnum(2,
-            "Square",
-            new List<string>
-            {
-                "2D"
-            });
-
-        public ShapesEnum(int id, string stringRepresentation, List<string> otherPossibleRepresentation = null) :
-            base(id, stringRepresentation, otherPossibleRepresentation)
-        {
-        }
-
-        public ShapesEnum()
-        {
-        }
-    }
-
-    public class WeekDaysEnum : StringEnumMap<WeekDaysEnum>
-    {
-        public static readonly WeekDaysEnum Monday = new WeekDaysEnum(1,
-            "Monday",
-            new List<string>
-            {
-                "Mon",
-                "M"
-            });
-
-        public static readonly WeekDaysEnum Tuesday = new WeekDaysEnum(2,
-            "Tuesday",
-            new List<string>
-            {
-                "Tue",
-                "Tu"
-            });
-
-        public static readonly WeekDaysEnum Wednesday = new WeekDaysEnum(3,
-            "Wednesday",
-            new List<string>
-            {
-                "Wed",
-                "W"
-            });
-
-        public static readonly WeekDaysEnum Thursday = new WeekDaysEnum(4,
-            "Thursday",
-            new List<string>
-            {
-                "Thu",
-                "Th"
-            });
-
-        public static readonly WeekDaysEnum Friday = new WeekDaysEnum(5,
-            "Friday",
-            new List<string>
-            {
-                "Fri",
-                "F"
-            });
-
-        public static readonly WeekDaysEnum Saturday = new WeekDaysEnum(6,
-            "Saturday",
-            new List<string>
-            {
-                "Sat",
-                "Sa"
-            });
-
-        public static readonly WeekDaysEnum Sunday = new WeekDaysEnum(7,
-            "Sunday",
-            new List<string>
-            {
-                "Sun",
-                "Su"
-            });
-
-
-        public WeekDaysEnum(int id,
-            string stringRepr,
-            List<string> possibleStringRepr = null) : base(id, stringRepr, possibleStringRepr)
-        {
-        }
-
-        public WeekDaysEnum()
-        {
-        }
-    }
+    
 }

@@ -21,7 +21,7 @@ namespace Scripts
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Invalid cast test: {e}");
+                Console.WriteLine($"Invalid cast test: {e.Message}");
             }
 
             var myStringEnum = (WeekDaysEnum) "Mon";
@@ -35,13 +35,15 @@ namespace Scripts
             Console.WriteLine($"Val 1 < Val 2 (true): {WeekDaysEnum.Monday < WeekDaysEnum.Tuesday}");
             Console.WriteLine($"Val 1 > Val 2 (false): {"Mon" > WeekDaysEnum.Tuesday}");
             Console.WriteLine($"Cast ToInt(): {WeekDaysEnum.ToInt(WeekDaysEnum.Monday)}");
-            Console.WriteLine($"Cast to (int): {(int) WeekDaysEnum.Monday}");
-            Console.WriteLine($"Cast from (int): {(WeekDaysEnum) 1}");
-            Console.WriteLine($"Cast to (string): {(string) WeekDaysEnum.Monday}");
-            Console.WriteLine($"Cast from (string): {(WeekDaysEnum) "Monday"}");
-            Console.WriteLine($"Compare between enums: {ShapesEnum.Line == WeekDaysEnum.Monday}");
+            Console.WriteLine($"Cast to int (1): {(int) WeekDaysEnum.Monday}");
+            Console.WriteLine($"Cast from int (Monday): {(WeekDaysEnum) 1}");
+            Console.WriteLine($"Cast to string (Monday): {(string) WeekDaysEnum.Monday}");
+            Console.WriteLine($"Cast from string (Monday): {(WeekDaysEnum) "Monday"}");
+            // Compile error.
+//            Console.WriteLine($"Compare between enums (false): {ShapesEnum.Line == WeekDaysEnum.Monday}");
+            Console.WriteLine($"Hash Code: {WeekDaysEnum.Monday.GetHashCode()}");
 
-            Console.ReadKey();
+//            Console.ReadKey();
         }
     }
 }
