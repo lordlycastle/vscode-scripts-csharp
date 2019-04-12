@@ -293,113 +293,101 @@ namespace Scripts
         #endregion
     }
 
-    public class Map<T1, T2> : IEnumerable<KeyValuePair<T1, T2>>
+    public class ShapesEnum : StringEnumMap<ShapesEnum>
     {
-        private readonly Dictionary<T1, T2> _forward = new Dictionary<T1, T2>();
-        private readonly Dictionary<T2, T1> _reverse = new Dictionary<T2, T1>();
+        public static readonly ShapesEnum Point = new ShapesEnum(0,
+            "Point");
 
-        public Map()
-        {
-            Forward = new Indexer<T1, T2>(_forward);
-            Reverse = new Indexer<T2, T1>(_reverse);
-        }
-
-        public Indexer<T1, T2> Forward { get; }
-        public Indexer<T2, T1> Reverse { get; }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public IEnumerator<KeyValuePair<T1, T2>> GetEnumerator()
-        {
-            return _forward.GetEnumerator();
-        }
-
-        public void Add(T1 t1, T2 t2)
-        {
-            _forward.Add(t1, t2);
-            _reverse.Add(t2, t1);
-        }
-
-        public class Indexer<T3, T4>
-        {
-            private readonly Dictionary<T3, T4> _dictionary;
-
-            public Indexer(Dictionary<T3, T4> dictionary)
+        public static readonly ShapesEnum Line = new ShapesEnum(1,
+            "Line",
+            new List<string>
             {
-                _dictionary = dictionary;
-            }
+                "1D"
+            });
 
-            public T4 this[T3 index]
+        public static readonly ShapesEnum Sqaure = new ShapesEnum(2,
+            "Square",
+            new List<string>
             {
-                get => _dictionary[index];
-                set => _dictionary[index] = value;
-            }
+                "2D"
+            });
 
-            public bool Contains(T3 key)
-            {
-                return _dictionary.ContainsKey(key);
-            }
+        public ShapesEnum(int id, string stringRepresentation, List<string> otherPossibleRepresentation = null) :
+            base(id, stringRepresentation, otherPossibleRepresentation)
+        {
+        }
+
+        public ShapesEnum()
+        {
         }
     }
 
-    public abstract class Enumeration : IComparable
+    public class WeekDaysEnum : StringEnumMap<WeekDaysEnum>
     {
-        protected Enumeration(int id, string name)
+        public static readonly WeekDaysEnum Monday = new WeekDaysEnum(1,
+            "Monday",
+            new List<string>
+            {
+                "Mon",
+                "M"
+            });
+
+        public static readonly WeekDaysEnum Tuesday = new WeekDaysEnum(2,
+            "Tuesday",
+            new List<string>
+            {
+                "Tue",
+                "Tu"
+            });
+
+        public static readonly WeekDaysEnum Wednesday = new WeekDaysEnum(3,
+            "Wednesday",
+            new List<string>
+            {
+                "Wed",
+                "W"
+            });
+
+        public static readonly WeekDaysEnum Thursday = new WeekDaysEnum(4,
+            "Thursday",
+            new List<string>
+            {
+                "Thu",
+                "Th"
+            });
+
+        public static readonly WeekDaysEnum Friday = new WeekDaysEnum(5,
+            "Friday",
+            new List<string>
+            {
+                "Fri",
+                "F"
+            });
+
+        public static readonly WeekDaysEnum Saturday = new WeekDaysEnum(6,
+            "Saturday",
+            new List<string>
+            {
+                "Sat",
+                "Sa"
+            });
+
+        public static readonly WeekDaysEnum Sunday = new WeekDaysEnum(7,
+            "Sunday",
+            new List<string>
+            {
+                "Sun",
+                "Su"
+            });
+
+
+        public WeekDaysEnum(int id,
+            string stringRepr,
+            List<string> possibleStringRepr = null) : base(id, stringRepr, possibleStringRepr)
         {
-            Id = id;
-            Name = name;
         }
 
-        public string Name { get; }
-
-        public int Id { get; }
-
-        public int CompareTo(object other)
-        {
-            return Id.CompareTo(((Enumeration) other).Id);
-        }
-
-        public override string ToString()
-        {
-            return Name;
-        }
-
-        public static IEnumerable<T> GetAll<T>() where T : Enumeration
-        {
-            var fields = typeof(T).GetFields(BindingFlags.Public |
-                                             BindingFlags.Static |
-                                             BindingFlags.DeclaredOnly);
-
-            return fields.Select(f => f.GetValue(null)).Cast<T>();
-        }
-
-        public override bool Equals(object obj)
-        {
-            var otherValue = obj as Enumeration;
-
-            if (otherValue == null)
-                return false;
-
-            var typeMatches = GetType().Equals(obj.GetType());
-            var valueMatches = Id.Equals(otherValue.Id);
-
-            return typeMatches && valueMatches;
-        }
-
-        // Other utility methods ... 
-    }
-
-    public class CardType : Enumeration
-    {
-        public static CardType Amex = new CardType(1, "Amex");
-        public static CardType Visa = new CardType(2, "Visa");
-        public static CardType MasterCard = new CardType(3, "MasterCard");
-
-        public CardType(int id, string name)
-            : base(id, name)
+        public WeekDaysEnum()
         {
         }
     }
