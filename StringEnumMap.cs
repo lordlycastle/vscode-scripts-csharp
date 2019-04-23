@@ -73,6 +73,9 @@ namespace Scripts
             _stringRepresentation = stringRepresentation;
             if (!string.IsNullOrEmpty(_stringRepresentation))
             {
+                if (_fromString.ContainsKey(_stringRepresentation))
+                    throw new DuplicateNameException($"Key: {_stringRepresentation} is not unique. Also belongs to: {_fromString[(_stringRepresentation)]}.");
+
                 // Store the enum to string repr.
                 _toString[this] = _stringRepresentation;
                 _fromString[_stringRepresentation] = this;
@@ -90,8 +93,7 @@ namespace Scripts
                 foreach (var str in _otherPossibleRepresentation)
                 {
                     if (_fromString.ContainsKey(str))
-                        throw new TypeInitializationException(CachedType.ToString(),
-                            new Exception($"Key: {str} is not unique. Also belongs to: {_fromString[str]}."));
+                        throw new DuplicateNameException($"Key: {str} is not unique. Also belongs to: {_fromString[str]}.");
 
                     _fromString[str] = this;
                 }
@@ -269,7 +271,6 @@ namespace Scripts
         public static bool operator !=(int lhs, StringEnumMap<TEnum> rhs) => !(lhs == rhs);
 
         // Casting
-        public static int ToInt(TEnum _enum) => _enum._id;
 
         public static explicit operator int(StringEnumMap<TEnum> _enum) => _enum._id;
 

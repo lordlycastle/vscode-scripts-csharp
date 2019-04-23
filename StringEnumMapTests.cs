@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Scripts
 {
     using NUnit.Framework;
-    
+
     [TestFixture]
     public class WeekDaysEnum : StringEnumMap<WeekDaysEnum>
     {
@@ -77,59 +78,69 @@ namespace Scripts
         {
         }
 
-        [TestCase]
+        [Test]
         public void TestFromStringCast()
         {
             Assert.AreSame(Monday, (WeekDaysEnum) "Monday");
             Assert.AreSame(Monday, (WeekDaysEnum) "Mon");
         }
 
-        [TestCase]
+        [Test]
         public void TestToStringCast()
         {
             Assert.AreEqual("Tuesday", (string) Tuesday);
         }
 
-        [TestCase]
+        [Test]
         public void TestFromIntCast()
         {
             Assert.AreEqual(Monday, (WeekDaysEnum) 1);
         }
 
-        [TestCase]
+        [Test]
         public void TestToIntCast()
         {
             Assert.AreEqual(2, (int) Tuesday);
         }
 
-        [TestCase]
+        [Test]
         public void TestToString()
         {
             Assert.AreEqual("Monday", Monday.ToString());
         }
 
-        [TestCase]
+        [Test]
         public void TestEquality()
         {
             Assert.IsTrue(Monday != Tuesday);
+//            Assert.IsTrue(Monday == Monday);
             Assert.IsTrue(Monday == Monday);
+            WeekDaysEnum nullEnum = null;
+            Assert.IsTrue(nullEnum == (WeekDaysEnum) null);
+            Assert.IsTrue(nullEnum != Monday);
         }
 
-        [TestCase]
+        [Test]
         public void TestEqualityString()
         {
             Assert.IsTrue("Mon" == Monday);
+            Assert.IsTrue("Mon" != Tuesday);
             Assert.IsTrue(Tuesday == "Tuesday");
+            Assert.IsTrue(Tuesday != "Mon");
+            Assert.AreNotEqual(Monday, (string) null);
         }
 
-        [TestCase]
+        [Test]
         public void TestEqualityInt()
         {
             Assert.IsTrue(1 == Monday);
             Assert.IsTrue(Tuesday == 2);
+            Assert.IsTrue(1 != Tuesday);
+            Assert.IsTrue(Tuesday != 1);
         }
+        
 
-        [TestCase]
+        [Test]
         public void TestCompare()
         {
             // The Assert.Greater/.Less result in an inconclusive test. No idea why.
@@ -137,34 +148,74 @@ namespace Scripts
             Assert.IsTrue(Wednesday > Tuesday);
             Assert.IsTrue(Wednesday > Tuesday);
             Assert.IsTrue("Wed" > Tuesday);
+            Assert.IsTrue("Wed" < Thursday);
             Assert.IsTrue(Thursday < "Fri");
+            Assert.IsTrue(Saturday > "Fri");
             Assert.IsTrue(7 > Saturday);
+            Assert.IsTrue(5 < Saturday);
             Assert.IsTrue(Saturday < 7);
+            Assert.IsTrue(Saturday > Tuesday);
+            
+            Assert.IsFalse(Monday > "Mon");
+            Assert.IsFalse(Monday < 1);
         }
 
-        [TestCase]
+        [Test]
         public void TestHashCode()
         {
             Assert.AreEqual(Monday.GetHashCode(), ((WeekDaysEnum) "Mon").GetHashCode());
         }
 
-        [TestCase]
+        [Test]
         public void TestCast()
         {
-            var ex = Assert.Throws<InvalidCastException>(() =>
+            Assert.Throws<InvalidCastException>(() =>
             {
-                WeekDaysEnum funday = (WeekDaysEnum) "Funday";
+                WeekDaysEnum __ = (WeekDaysEnum) "Funday";
             });
-            Assert.That(ex.GetType() == typeof(InvalidCastException));
         }
 
-        [TestCase]
+        [Test]
         public void TestGetAll()
         {
             Assert.AreEqual(7, WeekDaysEnum.GetAll().Count());
         }
+
+        [Test]
+        public void TestSameIdEnums()
+        {
+            // Test that creates another var with same ID.
+            Assert.Throws<DuplicateNameException>(() => new WeekDaysEnum(1, "Not Monday"));
+            // Test that tries to pass in null for string repr.
+            Assert.Throws<TypeInitializationException>(() => new WeekDaysEnum(10, null));
+            // Test that passes in non-unique key.
+            Assert.Throws<DuplicateNameException>(() => new WeekDaysEnum(99, "Monday"));
+            Assert.Throws<DuplicateNameException>(() => new WeekDaysEnum(99,
+                "Someday",
+                new List<string> {"Mon"}));
+        }
+        
+        [Test]
+        public void TestGetEnumerator()
+        {
+            var i = 1;
+            foreach (WeekDaysEnum weekDaysEnum in WeekDaysEnum._)
+            {
+                Assert.AreEqual(i, (int) weekDaysEnum);
+                i++;
+            }
+
+            i = 1;
+            foreach (WeekDaysEnum weekDaysEnum in WeekDaysEnum.GetAll())
+            {
+                Assert.AreEqual(i, (int) weekDaysEnum);
+                i++;
+                
+            }
+        }
+        
     }
-    
+
     [TestFixture]
     public class ShapesEnum : StringEnumMap<ShapesEnum>
     {
@@ -194,5 +245,4 @@ namespace Scripts
         {
         }
     }
-    
 }
